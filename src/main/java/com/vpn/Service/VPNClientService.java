@@ -5,6 +5,7 @@ import com.vpn.Entity.User;
 import com.vpn.Entity.VPNClient;
 import com.vpn.Repository.UserRepository;
 import com.vpn.Repository.VPNClientRepository;
+import com.vpn.Util.IpAllocator;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -20,22 +21,24 @@ public class VPNClientService {
 
     private final UserRepository userRepository;
     private final VPNClientRepository vpnClientRepository;
+    private final IpAllocator ipAllocator;
 
     public VPNClientResponse CreateVpnClient(Long Id){
         User user = userRepository.findById(Id)
                 .orElseThrow(()-> new RuntimeException("Client not found"));
 
+        String ip = ipAllocator.IpAllocate();
+
         VPNClient client = VPNClient.builder()
                            .user(user)
                            .PublicKey("TEMP_KEY")
-                           .vpnIP("TEMP_IP")
-                .build();
+                           .vpnIP(ip)
+                           .build();
 
         VPNClient saved = vpnClientRepository.save(client);
 
         VPNClientResponse response = new VPNClientResponse();
 
-        
         response.setId(saved.getId());
         response.setVpnIP(saved.getVpnIP());
         response.setPublicKey(saved.getPublicKey());

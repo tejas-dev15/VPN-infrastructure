@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface VPNClientRepository extends JpaRepository<VPNClient, Long> {
       Optional<VPNClient> findById(Long id);
+      Optional<VPNClient> findByVpnIP(String vpnIP);
 }
