@@ -1,13 +1,12 @@
 package com.vpn.Controller;
-
 import com.vpn.DTO.VPNClientResponse;
 import com.vpn.Entity.VPNClient;
+import com.vpn.Service.SSHService;
 import com.vpn.Service.VPNClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -16,6 +15,7 @@ import java.util.List;
 public class VPNClientController {
 
     private final VPNClientService vpnClientService;
+    private final SSHService sshService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/Create-Client")

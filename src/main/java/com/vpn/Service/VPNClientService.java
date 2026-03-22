@@ -22,16 +22,21 @@ public class VPNClientService {
     private final UserRepository userRepository;
     private final VPNClientRepository vpnClientRepository;
     private final IpAllocator ipAllocator;
+    private final SSHService sshService;
 
     public VPNClientResponse CreateVpnClient(Long Id){
         User user = userRepository.findById(Id)
                 .orElseThrow(()-> new RuntimeException("Client not found"));
 
+        String privateKey = sshService.generatePrivateKey();
+        String PublicKey = sshService.generatePublicKey(privateKey);
+
         String ip = ipAllocator.IpAllocate();
 
+        sshService.AddPeer(PublicKey, ip);
         VPNClient client = VPNClient.builder()
                            .user(user)
-                           .PublicKey("TEMP_KEY")
+                           .PublicKey(PublicKey)
                            .vpnIP(ip)
                            .build();
 
