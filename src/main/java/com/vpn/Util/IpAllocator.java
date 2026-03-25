@@ -30,7 +30,7 @@ public class IpAllocator {
             }
         }
 
-        for(int i =2; i<= 254 ; i++){
+        for(int i =3; i<= 254 ; i++){
             if(!used.contains(i)){
                 return BASE_IP + i;
             }

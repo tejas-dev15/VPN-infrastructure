@@ -35,9 +35,14 @@ public class VPNClientController {
         return vpnClientService.getClientById(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @DeleteMapping("{id}")
     public void DeleteVPNClient(@PathVariable Long id){
         vpnClientService.DeleteClient(id);
+    }
+
+    @GetMapping("/config/{id}")
+    public String GetConfig(@PathVariable Long id){
+        return vpnClientService.generate_Config(id);
     }
 }

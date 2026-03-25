@@ -20,7 +20,7 @@ public class VPNClient {
     private Long id;
 
     private String PublicKey;
-
+    private String PrivateKey;
     private String vpnIP;
 
     private LocalDateTime Created_At;

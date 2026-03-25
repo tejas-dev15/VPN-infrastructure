@@ -5,14 +5,13 @@ import com.vpn.Entity.User;
 import com.vpn.Entity.VPNClient;
 import com.vpn.Repository.UserRepository;
 import com.vpn.Repository.VPNClientRepository;
+import com.vpn.Util.ConfigGenerator;
 import com.vpn.Util.IpAllocator;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+import java.util.Optional;
 
 
 @Service
@@ -23,6 +22,7 @@ public class VPNClientService {
     private final VPNClientRepository vpnClientRepository;
     private final IpAllocator ipAllocator;
     private final SSHService sshService;
+    private final ConfigGenerator configGenerator;
 
     public VPNClientResponse CreateVpnClient(Long Id){
         User user = userRepository.findById(Id)
@@ -30,6 +30,7 @@ public class VPNClientService {
 
         String privateKey = sshService.generatePrivateKey();
         String PublicKey = sshService.generatePublicKey(privateKey);
+        String PrivateKey = sshService.generatePrivateKey();
 
         String ip = ipAllocator.IpAllocate();
 
@@ -37,6 +38,7 @@ public class VPNClientService {
         VPNClient client = VPNClient.builder()
                            .user(user)
                            .PublicKey(PublicKey)
+                           .PrivateKey(PrivateKey)
                            .vpnIP(ip)
                            .build();
 
@@ -47,7 +49,7 @@ public class VPNClientService {
         response.setId(saved.getId());
         response.setVpnIP(saved.getVpnIP());
         response.setPublicKey(saved.getPublicKey());
-
+        response.setPrivateKey(saved.getPrivateKey());
         response.setId(saved.getUser().getId());
         response.setUsername(saved.getUser().getUsername());
 
@@ -66,7 +68,7 @@ public class VPNClientService {
             response.setId(client.getId());
             response.setVpnIP(client.getVpnIP());
             response.setPublicKey(client.getPublicKey());
-
+            response.setPrivateKey(client.getPrivateKey());
             response.setId(client.getUser().getId());
             response.setUsername(client.getUser().getUsername());
 
@@ -85,7 +87,7 @@ public class VPNClientService {
         response.setId(client.getId());
         response.setVpnIP(client.getVpnIP());
         response.setPublicKey(client.getPublicKey());
-
+        response.setPrivateKey(client.getPrivateKey());
         response.setId(client.getUser().getId());
         response.setUsername(client.getUser().getUsername());
 
@@ -93,6 +95,18 @@ public class VPNClientService {
     }
 
     public void DeleteClient(Long id){
+        Optional<VPNClient> Client = Optional.ofNullable(vpnClientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Client not found")));
+
+        sshService.removePeer(Client.get().getPublicKey());
+
          vpnClientRepository.deleteById(id);
+    }
+
+    public String generate_Config(Long id){
+        VPNClient client = vpnClientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("client not found"));
+
+        return configGenerator.Generate_config(client);
     }
 }
