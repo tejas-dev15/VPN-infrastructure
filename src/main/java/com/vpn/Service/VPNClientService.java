@@ -7,6 +7,7 @@ import com.vpn.Repository.UserRepository;
 import com.vpn.Repository.VPNClientRepository;
 import com.vpn.Util.ConfigGenerator;
 import com.vpn.Util.IpAllocator;
+import com.vpn.Util.QRCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class VPNClientService {
     private final IpAllocator ipAllocator;
     private final SSHService sshService;
     private final ConfigGenerator configGenerator;
+    private final QRCodeGenerator qrCodeGenerator;
 
     public VPNClientResponse CreateVpnClient(Long Id){
         User user = userRepository.findById(Id)
@@ -108,5 +110,14 @@ public class VPNClientService {
                 .orElseThrow(() -> new RuntimeException("client not found"));
 
         return configGenerator.Generate_config(client);
+    }
+
+    public byte[] QR_Generator(Long id){
+        VPNClient client = vpnClientRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Client not found"));
+
+        String config = configGenerator.Generate_config(client);
+
+        return qrCodeGenerator.generate_QR(config);
     }
 }

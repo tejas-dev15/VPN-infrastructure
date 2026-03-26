@@ -45,4 +45,9 @@ public class VPNClientController {
     public String GetConfig(@PathVariable Long id){
         return vpnClientService.generate_Config(id);
     }
+
+    @GetMapping(value ="/{id}/qr", produces= "image/png" )
+    public byte[] get_QR(@PathVariable Long id){
+        return vpnClientService.QR_Generator(id);
+    }
 }

@@ -8,7 +8,7 @@ import java.util.Optional;
 @Component
 public class ConfigGenerator {
 
-    private final String Server_IP = "192.168.0.102";
+    private final String Server_IP = "192.168.0.104";
     String server_PublicKey = "OHJvxbaakTfXdZ8jrVqEd91pAWJSvlO5az5yQ+o5sAs=";
 
     public String Generate_config(VPNClient client){
@@ -17,13 +17,14 @@ public class ConfigGenerator {
         return String.format("""
                 [Interface]
                 PrivateKey = %s
-                Address = %s/24
-                DNS = 1.1.1.1
+                Address = %s/32
+                DNS = 8.8.8.8
+                MTU = 1380
                 
                 [Peer]
                 PublicKey = %s
                 Endpoint = %s:51820
-                Allowed IPs = 0.0.0.0
+                AllowedIPs = 0.0.0.0/0
                 PersistentKeepalive = 25
                 """,
                 client.getPrivateKey(),
