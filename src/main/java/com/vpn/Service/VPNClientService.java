@@ -32,15 +32,13 @@ public class VPNClientService {
 
         String privateKey = sshService.generatePrivateKey();
         String PublicKey = sshService.generatePublicKey(privateKey);
-        String PrivateKey = sshService.generatePrivateKey();
-
         String ip = ipAllocator.IpAllocate();
-
         sshService.AddPeer(PublicKey, ip);
+
         VPNClient client = VPNClient.builder()
                            .user(user)
                            .PublicKey(PublicKey)
-                           .PrivateKey(PrivateKey)
+                           .PrivateKey(privateKey)
                            .vpnIP(ip)
                            .build();
 
