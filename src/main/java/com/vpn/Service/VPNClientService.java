@@ -3,6 +3,7 @@ package com.vpn.Service;
 import com.vpn.DTO.VPNClientResponse;
 import com.vpn.Entity.User;
 import com.vpn.Entity.VPNClient;
+import com.vpn.Exception.ClientNotFoundException;
 import com.vpn.Repository.UserRepository;
 import com.vpn.Repository.VPNClientRepository;
 import com.vpn.Util.ConfigGenerator;
@@ -28,7 +29,7 @@ public class VPNClientService {
 
     public VPNClientResponse CreateVpnClient(Long Id){
         User user = userRepository.findById(Id)
-                .orElseThrow(()-> new RuntimeException("Client not found"));
+                .orElseThrow(()-> new ClientNotFoundException("Client not found"));
 
         String privateKey = sshService.generatePrivateKey();
         String PublicKey = sshService.generatePublicKey(privateKey);
@@ -61,6 +62,7 @@ public class VPNClientService {
 
         List<VPNClient> clients = vpnClientRepository.findAll();
 
+
         return clients.stream().map(client -> {
 
             VPNClientResponse response = new VPNClientResponse();
@@ -80,7 +82,7 @@ public class VPNClientService {
     public VPNClientResponse getClientById(Long id) {
 
         VPNClient client = vpnClientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client not found"));
+                .orElseThrow(() -> new ClientNotFoundException("Client not found"));
 
         VPNClientResponse response = new VPNClientResponse();
 
@@ -96,23 +98,25 @@ public class VPNClientService {
 
     public void DeleteClient(Long id){
         Optional<VPNClient> Client = Optional.ofNullable(vpnClientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client not found")));
-
-        sshService.removePeer(Client.get().getPublicKey());
-
+                .orElseThrow(() -> new ClientNotFoundException("Client not found")));
+        try {
+            sshService.removePeer(Client.get().getPublicKey());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to Remove Peer form Wireguard");
+        }
          vpnClientRepository.deleteById(id);
     }
 
     public String generate_Config(Long id){
         VPNClient client = vpnClientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("client not found"));
+                .orElseThrow(() -> new ClientNotFoundException("client not found"));
 
         return configGenerator.Generate_config(client);
     }
 
     public byte[] QR_Generator(Long id){
         VPNClient client = vpnClientRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Client not found"));
+                .orElseThrow(()-> new ClientNotFoundException("Client not found"));
 
         String config = configGenerator.Generate_config(client);
 

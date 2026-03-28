@@ -18,8 +18,8 @@ public class UserController {
 
     private final UserService userService;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+
+    @PostMapping("/Create-users")
     public User CreateUsers(@Valid @RequestBody CreateUserRequest request){
         return userService.CreateUser(request);
     }

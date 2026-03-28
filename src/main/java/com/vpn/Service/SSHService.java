@@ -70,7 +70,7 @@ public class SSHService {
 
     public void removePeer(String publicKey){
            String command = String.format(
-                   "wg set wg0 peer %s remove",
+                   "sudo wg set wg0 peer %s remove",
                    publicKey
            );
            executeCommand(command);

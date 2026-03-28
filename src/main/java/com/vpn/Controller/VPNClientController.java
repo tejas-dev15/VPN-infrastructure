@@ -29,13 +29,13 @@ public class VPNClientController {
         return vpnClientService.getAllClients();
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{id}")
     public VPNClientResponse getVPNClient(@PathVariable Long id){
         return vpnClientService.getClientById(id);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("{id}")
     public void DeleteVPNClient(@PathVariable Long id){
         vpnClientService.DeleteClient(id);
