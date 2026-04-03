@@ -20,7 +20,7 @@ public class VPNClientController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/Create-Client")
     public VPNClientResponse CreateClient(@RequestParam Long id){
-         return vpnClientService.CreateVpnClient(id);
+         return vpnClientService.createVpnClient(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

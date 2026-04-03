@@ -27,7 +27,7 @@ public class VPNClientService {
     private final ConfigGenerator configGenerator;
     private final QRCodeGenerator qrCodeGenerator;
 
-    public VPNClientResponse CreateVpnClient(Long Id){
+    public VPNClientResponse createVpnClient(Long Id){
         User user = userRepository.findById(Id)
                 .orElseThrow(()-> new ClientNotFoundException("Client not found"));
 
@@ -44,39 +44,15 @@ public class VPNClientService {
                            .build();
 
         VPNClient saved = vpnClientRepository.save(client);
-
-        VPNClientResponse response = new VPNClientResponse();
-
-        response.setId(saved.getId());
-        response.setVpnIP(saved.getVpnIP());
-        response.setPublicKey(saved.getPublicKey());
-        response.setPrivateKey(saved.getPrivateKey());
-        response.setId(saved.getUser().getId());
-        response.setUsername(saved.getUser().getUsername());
-
-        
-        return  response;
+        return  maptoResponse(saved, true);
     }
 
     public List<VPNClientResponse> getAllClients() {
 
-        List<VPNClient> clients = vpnClientRepository.findAll();
-
-
-        return clients.stream().map(client -> {
-
-            VPNClientResponse response = new VPNClientResponse();
-
-            response.setId(client.getId());
-            response.setVpnIP(client.getVpnIP());
-            response.setPublicKey(client.getPublicKey());
-            response.setPrivateKey(client.getPrivateKey());
-            response.setId(client.getUser().getId());
-            response.setUsername(client.getUser().getUsername());
-
-            return response;
-
-        }).toList();
+        return vpnClientRepository.findAll()
+                .stream()
+                .map(client -> maptoResponse(client,false))
+                .toList();
     }
 
     public VPNClientResponse getClientById(Long id) {
@@ -84,23 +60,14 @@ public class VPNClientService {
         VPNClient client = vpnClientRepository.findById(id)
                 .orElseThrow(() -> new ClientNotFoundException("Client not found"));
 
-        VPNClientResponse response = new VPNClientResponse();
-
-        response.setId(client.getId());
-        response.setVpnIP(client.getVpnIP());
-        response.setPublicKey(client.getPublicKey());
-        response.setPrivateKey(client.getPrivateKey());
-        response.setId(client.getUser().getId());
-        response.setUsername(client.getUser().getUsername());
-
-        return response;
+       return maptoResponse(client, true);
     }
 
     public void DeleteClient(Long id){
-        Optional<VPNClient> Client = Optional.ofNullable(vpnClientRepository.findById(id)
-                .orElseThrow(() -> new ClientNotFoundException("Client not found")));
+        VPNClient Client = vpnClientRepository.findById(id)
+                .orElseThrow(() -> new ClientNotFoundException("Client not found"));
         try {
-            sshService.removePeer(Client.get().getPublicKey());
+            sshService.removePeer(Client.getPublicKey());
         } catch (Exception e) {
             throw new RuntimeException("Failed to Remove Peer form Wireguard");
         }
@@ -121,5 +88,20 @@ public class VPNClientService {
         String config = configGenerator.Generate_config(client);
 
         return qrCodeGenerator.generate_QR(config);
+    }
+
+    public VPNClientResponse maptoResponse(VPNClient client,boolean includePrivateKey){
+        VPNClientResponse response = new VPNClientResponse();
+
+        response.setId(client.getId());
+        response.setUserId(client.getUser().getId());
+        response.setUsername(client.getUser().getUsername());
+        response.setVpnIP(client.getVpnIP());
+        response.setPublicKey(client.getPublicKey());
+
+        if(includePrivateKey){
+            response.setPrivateKey(client.getPrivateKey());
+        }
+        return response;
     }
 }

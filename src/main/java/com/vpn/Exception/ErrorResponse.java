@@ -1,4 +1,4 @@
-package com.vpn.DTO;
+package com.vpn.Exception;
 
 import lombok.Builder;
 import lombok.Data;

@@ -9,7 +9,7 @@ import java.io.InputStream;
 @Service
 public class SSHService {
 
-    private final String HOST = "192.168.0.104";
+    private final String HOST = "192.168.0.200";
     private final String PASSWORD = "POPWW2005";
     private final String USER = "tejas";
 

@@ -8,7 +8,7 @@ import java.util.Optional;
 @Component
 public class ConfigGenerator {
 
-    private final String Server_IP = "192.168.0.104";
+    private final String Server_IP = "192.168.0.200";
     String server_PublicKey = "OHJvxbaakTfXdZ8jrVqEd91pAWJSvlO5az5yQ+o5sAs=";
 
     public String Generate_config(VPNClient client){
