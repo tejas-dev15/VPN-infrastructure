@@ -204,8 +204,10 @@ Backend Engineering + Networking + Security + System Design
 
 ## 📌 Author
 
-**Tejas**
+**Tejas Dange**
+
 Computer Science Engineering Student
+
 Passionate about backend systems, networking, and real-world projects
 
 ---
