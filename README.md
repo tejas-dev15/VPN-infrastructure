@@ -121,8 +121,8 @@ POST /users
 ```
 POST   /vpn/clients
 GET    /vpn/clients
-GET    /vpn/clients/{id}
-DELETE /vpn/clients/{id}
+GET    /vpn/{id}
+DELETE /vpn/{id}
 ```
 
 ---
@@ -130,8 +130,8 @@ DELETE /vpn/clients/{id}
 ### ⚙️ Config & QR
 
 ```
-GET /vpn/clients/{id}/config
-GET /vpn/clients/{id}/qr
+GET /vpn/{id}/config
+GET /vpn/{id}/qr
 ```
 
 ---
